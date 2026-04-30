@@ -1,36 +1,38 @@
 pipeline {
-    agent any 
-    
-    tools {
-        nodejs 'node18'
-    }
+    agent any
 
     stages {
-        stage('Clone code') {
+
+        stage('Clone Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/muddasir-x/CI-CD-Pipeline-with-Docker.git'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install Dependencies (Node in Docker)') {
+            agent {
+                docker {
+                    image 'node:18'
+                }
+            }
             steps {
                 sh 'npm install'
             }
         }
 
-        stage('Cleanup old container') {
+        stage('Cleanup Old Container') {
             steps {
                 sh 'docker rm -f devops-app || true'
             }
         }
 
-        stage('Build container') {
+        stage('Build Docker Image') {
             steps {
                 sh 'docker build -t devops-app:${BUILD_NUMBER} .'
             }
         }
 
-        stage('Run container') {
+        stage('Run Container') {
             steps {
                 sh 'docker run -d -p 3000:3000 --name devops-app devops-app:${BUILD_NUMBER}'
             }
