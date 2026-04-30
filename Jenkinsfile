@@ -2,37 +2,46 @@ pipeline {
     agent any 
 
     stages {
-        stage ('Clone code') {
+        stage('Clone code') {
             steps {
                 git branch: 'main', url: 'https://github.com/muddasir-x/CI-CD-Pipeline-with-Docker.git'
             }
         }
+
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
             }
         }
+
+        stage('Cleanup old container') {
+            steps {
+                sh 'docker rm -f devops-app || true'
+            }
+        }
+
         stage('Build container') {
             steps {
-                sh 'docker build -t devops-app:v1'
+                sh 'docker build -t devops-app:${BUILD_NUMBER} .'
             }
         }
+
         stage('Run container') {
-            steps{
-                sh 'docker run -d -p 3000:3000 devops-app'
+            steps {
+                sh 'docker run -d -p 3000:3000 --name devops-app devops-app:${BUILD_NUMBER}'
             }
         }
-        
     }
+
     post {
         always {
-            echo "we build pipeline"
+            echo "Pipeline executed"
         }
         success {
-            echo "pipeline successfull"
+            echo "Pipeline successful ✅"
         }
-        fail {
-            echo "try again something is worng"
+        failure {
+            echo "Something went wrong ❌"
         }
     }
 }
