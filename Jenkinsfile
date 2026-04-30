@@ -3,12 +3,12 @@ pipeline {
 
     stages {
         stage ('Clone code') {
-            stpes {
-                git 'https://github.com/muddasir-x/CI-CD-Pipeline-with-Docker.git'
+            steps {
+                git branch: 'main', url: 'https://github.com/muddasir-x/CI-CD-Pipeline-with-Docker.git'
             }
         }
         stage('Install Dependencies') {
-            stpes {
+            steps {
                 sh 'npm install'
             }
         }
