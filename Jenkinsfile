@@ -12,7 +12,7 @@ pipeline {
         stage('Install Dependencies (Node in Docker)') {
             agent {
                 docker {
-                    image 'node:18'
+                    image 'node:18-slim'
                 }
             }
             steps {
